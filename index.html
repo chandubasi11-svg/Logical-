@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Logical Expression & Truth Table Generator</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: auto;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 25px;
+        }
+
+        header h1 {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .card {
+            background: white;
+            border-radius: 18px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .input-area {
+            display: flex;
+            gap: 10px;
+        }
+
+        input {
+            flex: 1;
+            padding: 14px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: #667eea;
+        }
+
+        button {
+            border: none;
+            padding: 14px 20px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            color: white;
+            background: #667eea;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            background: #5568d9;
+        }
+
+        .clear-btn {
+            background: #e74c3c;
+        }
+
+        .clear-btn:hover {
+            background: #c0392b;
+        }
+
+        .examples {
+            margin-top: 15px;
+            color: #555;
+        }
+
+        .examples span {
+            display: inline-block;
+            background: #f0f2ff;
+            padding: 7px 10px;
+            margin: 4px;
+            border-radius: 7px;
+            cursor: pointer;
+            color: #4d5fd3;
+        }
+
+        .examples span:hover {
+            background: #dfe3ff;
+        }
+
+        .result-title {
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .expression-display {
+            background: #f5f6fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #4d5fd3;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: center;
+            min-width: 400px;
+        }
+
+        th {
+            background: #667eea;
+            color: white;
+            padding: 13px;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        tr:nth-child(even) {
+            background: #f7f7f7;
+        }
+
+        .true {
+            color: #168a45;
+            font-weight: bold;
+        }
+
+        .false {
+            color: #d63031;
+            font-weight: bold;
+        }
+
+        .error {
+            color: #d63031;
+            background: #ffeaea;
+            padding: 12px;
+            border-radius: 8px;
+            display: none;
+            margin-top: 15px;
+        }
+
+        .info {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .info-box {
+            background: #f5f6fa;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .info-box h3 {
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        footer {
+            text-align: center;
+            color: white;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+
+        @media (max-width: 600px) {
+            header h1 {
+                font-size: 25px;
+            }
+
+            .input-area {
+                flex-direction: column;
+            }
+
+            .info {
+                grid-template-columns: 1fr;
+            }
+
+            .card {
+                padding: 18px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <header>
+        <h1>🧠 Logical Expression & Truth Table Generator</h1>
+        <p>Enter a Boolean expression and generate its truth table instantly.</p>
+    </header>
+
+    <div class="card">
+
+        <label for="expression">Enter Logical Expression</label>
+
+        <div class="input-area">
+            <input
+                type="text"
+                id="expression"
+                placeholder="Example: A AND B"
+            >
+
+            <button onclick="generateTable()">Generate</button>
+            <button class="clear-btn" onclick="clearAll()">Clear</button>
+        </div>
+
+        <div class="examples">
+            <strong>Examples:</strong>
+
+            <span onclick="setExample('A AND B')">
+                A AND B
+            </span>
+
+            <span onclick="setExample('A OR B')">
+                A OR B
+            </span>
+
+            <span onclick="setExample('A XOR B')">
+                A XOR B
+            </span>
+
+            <span onclick="setExample('NOT A')">
+                NOT A
+            </span>
+
+            <span onclick="setExample('(A AND B) OR C')">
+                (A AND B) OR C
+            </span>
+        </div>
+
+        <div id="error" class="error"></div>
+
+    </div>
+
+
+    <div class="card" id="resultCard" style="display:none;">
+
+        <h2 class="result-title">
+            Truth Table
+        </h2>
+
+        <div class="expression-display">
+            Expression:
+            <span id="displayExpression"></span>
+        </div>
+
+        <div class="table-container">
+            <table id="truthTable">
+            </table>
+        </div>
+
+        <div class="info">
+
+            <div class="info-box">
+                <h3 id="variableCount">0</h3>
+                <p>Variables</p>
+            </div>
+
+            <div class="info-box">
+                <h3 id="rowCount">0</h3>
+                <p>Rows</p>
+            </div>
+
+            <div class="info-box">
+                <h3 id="resultCount">0</h3>
+                <p>True Results</p>
+            </div>
+
+        </div>
+
+    </div>
+
+    <footer>
+        Logical Expression & Truth Table Generator
+    </footer>
+
+</div>
+
+
+<script>
+
+function setExample(value) {
+    document.getElementById("expression").value = value;
+    generateTable();
+}
+
+
+function clearAll() {
+
+    document.getElementById("expression").value = "";
+
+    document.getElementById("resultCard").style.display = "none";
+
+    document.getElementById("error").style.display = "none";
+
+    document.getElementById("truthTable").innerHTML = "";
+}
+
+
+/* Convert logical expression into JavaScript expression */
+
+function convertExpression(expression) {
+
+    let exp = expression.toUpperCase();
+
+    exp = exp.replace(/\bAND\b/g, "&&");
+    exp = exp.replace(/\bOR\b/g, "||");
+    exp = exp.replace(/\bXOR\b/g, " XOR ");
+    exp = exp.replace(/\bNOT\b/g, "!");
+
+    return exp;
+}
+
+
+/* Evaluate logical expression */
+
+function evaluateExpression(expression, values) {
+
+    let exp = expression.toUpperCase();
+
+    /* Replace variables */
+
+    for (let variable in values) {
+
+        let regex = new RegExp("\\b" + variable + "\\b", "g");
+
+        exp = exp.replace(
+            regex,
+            values[variable] ? "true" : "false"
+        );
+    }
+
+
+    /* NOT */
+
+    exp = exp.replace(/\bNOT\s+/g, "!");
+
+
+    /* AND */
+
+    exp = exp.replace(/\bAND\b/g, "&&");
+
+
+    /* OR */
+
+    exp = exp.replace(/\bOR\b/g, "||");
+
+
+    /* XOR */
+
+    exp = exp.replace(
+        /(\S+)\s+XOR\s+(\S+)/g,
+        "($1 !== $2)"
+    );
+
+
+    /* Convert remaining XOR symbols */
+
+    exp = exp.replace(
+        /(\S+)\s*\^\s*(\S+)/g,
+        "($1 !== $2)"
+    );
+
+
+    try {
+
+        return Function(
+            '"use strict"; return (' + exp + ')'
+        )();
+
+    } catch (error) {
+
+        throw new Error("Invalid logical expression.");
+
+    }
+}
+
+
+/* Generate Truth Table */
+
+function generateTable() {
+
+    const input =
+        document.getElementById("expression").value.trim();
+
+    const errorBox =
+        document.getElementById("error");
+
+    const resultCard =
+        document.getElementById("resultCard");
+
+
+    if (input === "") {
+
+        errorBox.innerText =
+            "Please enter a logical expression.";
+
+        errorBox.style.display = "block";
+
+        resultCard.style.display = "none";
+
+        return;
+    }
+
+
+    errorBox.style.display = "none";
+
+
+    /* Find variables */
+
+    const variables =
+        [...new Set(
+            input
+                .toUpperCase()
+                .match(/\b[A-Z]\b/g) || []
+        )];
+
+
+    if (variables.length === 0) {
+
+        errorBox.innerText =
+            "Please enter valid variables such as A, B or C.";
+
+        errorBox.style.display = "block";
+
+        return;
+    }
+
+
+    if (variables.length > 5) {
+
+        errorBox.innerText =
+            "Please use a maximum of 5 variables.";
+
+        errorBox.style.display = "block";
+
+        return;
+    }
+
+
+    const rows =
+        Math.pow(2, variables.length);
+
+
+    const table =
+        document.getElementById("truthTable");
+
+
+    table.innerHTML = "";
+
+
+    /* Create table header */
+
+    let header =
+        "<tr>";
+
+    variables.forEach(variable => {
+
+        header +=
+            `<th>${variable}</th>`;
+
+    });
+
+    header +=
+        "<th>Result</th></tr>";
+
+
+    table.innerHTML += header;
+
+
+    let trueCount = 0;
+
+
+    /* Generate all combinations */
+
+    for (let i = 0; i < rows; i++) {
+
+        let values = {};
+
+        let row =
+            "<tr>";
+
+
+        variables.forEach((variable, index) => {
+
+            const value =
+                Boolean(
+                    (i >> (variables.length - index - 1)) & 1
+                );
+
+            values[variable] = value;
+
+
+            row +=
+                `<td class="${value ? "true" : "false"}">
+                    ${value ? "TRUE" : "FALSE"}
+                </td>`;
+
+        });
+
+
+        try {
+
+            const result =
+                evaluateExpression(input, values);
+
+
+            if (result) {
+                trueCount++;
+            }
+
+
+            row +=
+                `<td class="${result ? "true" : "false"}">
+                    ${result ? "TRUE" : "FALSE"}
+                </td>`;
+
+
+        } catch (error) {
+
+            errorBox.innerText =
+                "Invalid expression. Use operators such as AND, OR, XOR and NOT.";
+
+            errorBox.style.display = "block";
+
+            resultCard.style.display = "none";
+
+            return;
+        }
+
+
+        row +=
+            "</tr>";
+
+
+        table.innerHTML += row;
+
+    }
+
+
+    document.getElementById("displayExpression")
+        .innerText = input;
+
+
+    document.getElementById("variableCount")
+        .innerText = variables.length;
+
+
+    document.getElementById("rowCount")
+        .innerText = rows;
+
+
+    document.getElementById("resultCount")
+        .innerText = trueCount;
+
+
+    resultCard.style.display = "block";
+}
+
+
+/* Press Enter to generate */
+
+document
+    .getElementById("expression")
+    .addEventListener("keypress", function(event) {
+
+        if (event.key === "Enter") {
+
+            generateTable();
+
+        }
+
+    });
+
+</script>
+
+</body>
+</html>
